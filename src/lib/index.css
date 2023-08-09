@@ -1,0 +1,156 @@
+html, body, #root {
+    width: 100%;
+    height: 100%;
+}
+
+.resize-border {
+    position: absolute;
+    background-color: #313ba4;
+    opacity: 0;
+    z-index: 10;
+}
+
+.resize-border:hover {
+    opacity: 0.8;
+}
+
+.resize-border.bottom {
+    bottom: calc(0px - var(--grid-gap));
+    left: 0;
+    right: 0;
+    height: calc((var(--grid-gap)));
+    cursor: row-resize;
+}
+
+.resize-border.right {
+    top: 0;
+    bottom: 0;
+    right: calc(0px - var(--grid-gap));
+    width: calc((var(--grid-gap)));
+    cursor: col-resize;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+}
+
+.tab-handle-overlay {
+    position: absolute;
+    box-sizing: border-box;
+    display: none;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    background: rgba(69, 159, 232, 0.51);
+    border: 2px dashed #459FE8;
+
+    pointer-events: none;
+    transition: 0s linear;
+    transition-property: left, right, top, bottom, width, height;
+}
+
+.panel {
+    position: relative;
+    display: flex;
+    flex: 1 100000000 0;
+    align-self: stretch;
+    height: 100%;
+    width: 100%;
+}
+
+.panel.leaf {
+    flex-direction: column;
+}
+
+.row > .panel-content, .column > .panel-content {
+    display: grid;
+    grid-gap: var(--grid-gap);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.leaf > .panel-content {
+    position: relative;
+    flex: 1;
+}
+
+.leaf > .panel-content > div {
+    background: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+}
+
+/* TAB HEADER */
+
+.tab-header {
+    display: flex;
+    flex-direction: row;
+    height: var(--header-height);
+}
+
+.tab-header-border {
+    position: relative;
+    height: 1px;
+    background: #cecece;
+    margin-top: -2px;
+    z-index: 0;
+}
+
+.tab-header-bottom {
+    position: relative;
+    background: white;
+    height: 3px;
+    z-index: 2;
+    border: #bdbdbd solid;
+    border-width: 0 1px 1px 1px;
+    margin-left: -1px;
+    margin-right: -1px;
+}
+
+.tab-placeholder {
+    width: 0;
+    transition: 0.1s linear;
+    height: 0;
+}
+
+.tab-handle {
+    position: relative;
+    box-sizing: border-box;
+    padding: 5px;
+    color: black;
+    background: white;
+    font-size: calc((var(--header-height) - 12px) * 0.8);
+    border: solid #bdbdbd;
+    border-width: 1px 1px 1px 1px;
+    margin-left: -1px;
+    z-index: 1;
+}
+
+.tab-handle:nth-child(2) {
+    border-left-width: 1px;
+}
+
+.tab-handle.tab-handle__hidden {
+    z-index: 0;
+}
+
+.tab-handle.tab-handle__visible:before {
+    content: '';
+    display: block;
+    background: #4591E8;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+}

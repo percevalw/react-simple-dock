@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "rootDir": "./src/lib",
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "module": "commonjs",
+    "target": "es5",
+    "jsx": "react",
+  },
+  "include": ["./src/lib/"],
+}
