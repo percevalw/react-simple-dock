@@ -1,5 +1,9 @@
 ## v0.1.1
 
+Now wraps the layout into a drag and drop context by default.
+
+## v0.1.1
+
 Minor fix to support dropping a panel on every side of the top-level container.
 
 ## v0.1.0

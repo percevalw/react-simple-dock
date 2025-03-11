@@ -1,11 +1,5 @@
 import React from "react";
 
-const LEFT = 0;
-const RIGHT = 1;
-const TOP = 2;
-const BOTTOM = 3;
-const TAB = 4;
-
 /**
  * Leaf layout configuration.
  *

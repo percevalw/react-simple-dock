@@ -1,53 +1,52 @@
 {
   "name": "react-simple-dock",
-  "version": "0.1.1",
-  "main": "dist/index.js",
+  "version": "0.1.2",
+  "main": "src/lib/index.tsx",
   "types": "dist/index.d.ts",
-  "type": "module",
   "description": "Simple dock component for React",
   "repository": "https://github.com/percevalw/react-simple-dock",
   "author": "Perceval Wajsbürt <perceval.wajsburt@gmail.com>",
+  "private": "true",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:lib:babel": "rm -rf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__,*.md",
-    "build:lib": "rm -rf dist && tsc --build tsconfig.lib.json && cp src/lib/*.css dist && rm -rf lib/",
+    "build:lib": "sh scripts/build_lib.sh",
     "prepublishOnly": "npm run build:lib",
-    "build:pret": "jlpm clean && jupyter labextension build .",
-    "build:pret:dev": "jlpm clean && jupyter labextension build --development True .",
-    "clean": "rm -rf pret/ui/simple_dock/js-extension lib",
-    "prepare": "husky install"
+    "build:pret": "npm clean && jupyter labextension build .",
+    "build:pret:dev": "npm clean && jupyter labextension build --development True . && node scripts/editPackageJson.js",
+    "clean": "rm -rf pret/ui/simple_dock/js-extension lib dist"
   },
   "dependencies": {
     "react-dnd": ">=16.0.1",
     "react-dnd-html5-backend": ">=16.0.1"
   },
   "peerDependencies": {
-    "@types/react": ">= 16",
-    "react": ">=16.0.0",
-    "react-dom": ">=16.0.0"
+    "react": ">=17.0.0",
+    "react-dom": ">=17.0.0"
   },
   "devDependencies": {
+    "@jupyterlab/builder": "^3.6.3",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.126",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
     "babel-cli": "^6.26.0",
+    "css-loader": ">6.0.0",
     "husky": ">=6",
     "lint-staged": ">=10",
     "prettier": "^3.5.3",
-    "react": "^19.0.0",
+    "react": "^18.2.0",
     "react-app-rewired": "^2.2.1",
-    "react-dom": "^19.0.0",
+    "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "ts-loader": "^9.5.2",
-    "typescript": "^5.8.2",
+    "typescript": "<5.0.0",
     "web-vitals": "^2.1.4"
   },
   "files": [
@@ -59,7 +58,7 @@
     "extension": "src/plugin.ts",
     "schemaDir": "src/schema",
     "outputDir": "pret/ui/simple_dock/js-extension",
-    "webpackConfig": "./webpack.jupyter.js"
+    "webpackConfig": "./webpack.config.pret.js"
   },
   "browserslist": {
     "production": [

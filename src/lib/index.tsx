@@ -571,3 +571,7 @@ export function Layout(props: {
     }
     return container;
 }
+
+Layout.defaultProps = {
+    wrapDnd: true,
+}

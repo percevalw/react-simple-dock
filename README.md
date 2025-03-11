@@ -16,6 +16,7 @@ npm install react-simple-dock
 
 ```tsx
 import React from "react";
+import ReactDOM from "react-dom";
 import { Layout, Panel } from "react-simple-dock";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";

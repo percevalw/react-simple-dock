@@ -1,12 +1,7 @@
 {
   "include": [
-    "src"
+    "src",
   ],
-  "paths": {
-    "react": [
-      "./node_modules/@types/react"
-    ]
-  },
   "compilerOptions": {
     "target": "es5",
     "lib": [
