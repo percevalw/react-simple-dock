@@ -5,6 +5,10 @@
 /.pnp
 .pnp.js
 
+src/**/*.js
+src/**/*.js.map
+src/**/*.d.ts
+
 # testing
 /coverage
 

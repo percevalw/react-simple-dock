@@ -1,13 +1,14 @@
 {
-  "extends": "./tsconfig",
   "compilerOptions": {
-    "rootDir": "./src/lib",
-    "outDir": "./dist",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": ["ESNext", "DOM"],
+    "jsx": "react-jsx",
     "declaration": true,
-    "declarationMap": true,
-    "module": "commonjs",
-    "target": "es5",
-    "jsx": "react",
+    "allowSyntheticDefaultImports": true,
+    "rootDir": "src/lib/",
+    "outDir": "dist",
   },
-  "include": ["./src/lib/"],
+  "include": ["./src/lib/"]
 }

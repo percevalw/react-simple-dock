@@ -1,11 +1,41 @@
-html, body, #root {
-    width: 100%;
-    height: 100%;
+/* Light Theme, feel free to override */
+:root {
+    --sd-grid-gap: 3px;
+}
+
+:root[data-theme="light"] {
+    --sd-background-color: #fff;
+    --sd-text-color: #000;
+    --sd-tab-border-color: #bdbdbd;
+    --sd-tab-background-color: white;
+    --sd-header-background-color: white;
+    --sd-header-border-color: #cecece;
+    --sd-overlay-color: rgba(69, 159, 232, 0.51);
+    --sd-highlight-color: #4591e8;
+}
+
+/* Dark Theme, feel free to override */
+:root[data-theme="dark"] {
+    --sd-background-color: #22272e;
+    --sd-text-color: #fff;
+    --sd-border-color: #666;
+    --sd-tab-border-color: #111;
+    --sd-highlight-color: #4591e8;
+    --sd-tab-background-color: #1c2128;
+    --sd-header-background-color: #333;
+    --sd-header-border-color: #444;
+    --sd-overlay-color: rgba(105, 159, 232, 0.51);
+}
+
+body[data-jp-theme-light] {
+    /* don't care about the theme, just that we're in JupyterLab */
+    --sd-grid-gap: 7px;
+    --sd-background-color: var(--jp-layout-color3);
 }
 
 .resize-border {
     position: absolute;
-    background-color: #313ba4;
+    background-color: var(--sd-background-color, #fff);
     opacity: 0;
     z-index: 10;
 }
@@ -15,18 +45,18 @@ html, body, #root {
 }
 
 .resize-border.bottom {
-    bottom: calc(0px - var(--grid-gap));
+    bottom: calc(0px - var(--sd-grid-gap));
     left: 0;
     right: 0;
-    height: calc((var(--grid-gap)));
+    height: calc((var(--sd-grid-gap)));
     cursor: row-resize;
 }
 
 .resize-border.right {
     top: 0;
     bottom: 0;
-    right: calc(0px - var(--grid-gap));
-    width: calc((var(--grid-gap)));
+    right: calc(0px - var(--sd-grid-gap));
+    width: calc((var(--sd-grid-gap)));
     cursor: col-resize;
 }
 
@@ -44,8 +74,8 @@ html, body, #root {
     right: 0;
     bottom: 0;
     z-index: 100;
-    background: rgba(69, 159, 232, 0.51);
-    border: 2px dashed #459FE8;
+    background: var(--sd-overlay-color, rgba(69, 159, 232, 0.51));
+    border: 2px dashed var(--sd-highlight-color, #4591e8);
 
     pointer-events: none;
     transition: 0s linear;
@@ -59,15 +89,17 @@ html, body, #root {
     align-self: stretch;
     height: 100%;
     width: 100%;
+    background: var(--sd-background-color);
 }
 
 .panel.leaf {
     flex-direction: column;
 }
 
-.row > .panel-content, .column > .panel-content {
+.row > .panel-content,
+.column > .panel-content {
     display: grid;
-    grid-gap: var(--grid-gap);
+    grid-gap: var(--sd-grid-gap);
     position: absolute;
     left: 0;
     top: 0;
@@ -81,7 +113,7 @@ html, body, #root {
 }
 
 .leaf > .panel-content > div {
-    background: white;
+    background: var(--sd-tab-background-color);
     position: absolute;
     top: 0;
     left: 0;
@@ -95,31 +127,34 @@ html, body, #root {
 .tab-header {
     display: flex;
     flex-direction: row;
-    height: var(--header-height);
+    height: var(--sd-header-height);
 }
 
 .tab-header-border {
     position: relative;
     height: 1px;
-    background: #cecece;
+    background: var(--sd-tab-border-color, #cecece);
     margin-top: -2px;
     z-index: 0;
 }
 
 .tab-header-bottom {
     position: relative;
-    background: white;
+    background: var(--sd-tab-background-color, white);
     height: 3px;
     z-index: 2;
-    border: #bdbdbd solid;
+    border: solid var(--sd-tab-border-color, #bdbdbd);
     border-width: 0 1px 1px 1px;
+    /*
+    Why did I put this ? It messes up the overall width of the layout
     margin-left: -1px;
     margin-right: -1px;
+    */
 }
 
 .tab-placeholder {
     width: 0;
-    transition: 0.1s linear;
+    transition: width 0.1s linear;
     height: 0;
 }
 
@@ -127,12 +162,13 @@ html, body, #root {
     position: relative;
     box-sizing: border-box;
     padding: 5px;
-    color: black;
-    background: white;
-    font-size: calc((var(--header-height) - 12px) * 0.8);
-    border: solid #bdbdbd;
+    color: var(--sd-text-color, #000);
+    background: var(--sd-tab-background-color, white);
+    font-size: calc((var(--sd-header-height) - 12px) * 0.8);
+    border: solid var(--sd-tab-border-color, #bdbdbd);
     border-width: 1px 1px 1px 1px;
-    margin-left: -1px;
+    /* Too overlap the border of the next handle and avoid double borders */
+    margin-right: -1px;
     z-index: 1;
 }
 
@@ -145,9 +181,9 @@ html, body, #root {
 }
 
 .tab-handle.tab-handle__visible:before {
-    content: '';
+    content: "";
     display: block;
-    background: #4591E8;
+    background: var(--sd-highlight-color, #4591e8);
     position: absolute;
     top: 0;
     left: 0;
