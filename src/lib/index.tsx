@@ -5,10 +5,6 @@ import { ContainerLayoutConfig, DnDItem, LayoutConfig, LeafLayoutConfig, PanelPr
 import { filterPanels, movePanel } from "./utils";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
-export const Panel = (props: PanelProps) => {
-    return null;
-};
-
 function useForceUpdate() {
     const [value, setValue] = useState(0); // integer state
     return () => setValue((value) => value + 1); // update state to force render
@@ -517,14 +513,45 @@ const Overlay = ({
     return <div className="tab-handle-overlay" ref={overlayRef} />;
 };
 
-export function Layout(props: {
+
+/**
+ * A Panel component.
+ *
+ * This component represents a Panel within the layout.
+ *
+ * @param props.name The unique identifier of the panel.
+ * @param props.header The content to render in the panel header.
+ * @param props.children The content to render within the panel.
+ */
+export const Panel = (props: PanelProps) => {
+    return null;
+};
+
+
+/**
+ * Main layout component that organizes panels and handles drag and drop.
+ *
+ * The Layout component takes child panel components, constructs an initial layout configuration,
+ * and renders the panel structure using NestedPanel. It also wraps the layout in a DndProvider
+ * if drag and drop support is enabled.
+ *
+ * @param children The children `Panel` components to render within the layout.
+ * @param defaultConfig The default layout configuration to use.
+ * @param wrapDnd A boolean flag to enable or disable drag and drop support (default: true).
+ * @returns A React element representing the complete panel layout.
+ */
+export function Layout({
+    children,
+    defaultConfig,
+    wrapDnd = true,
+}: {
     children: React.ReactElement<PanelProps>[] | React.ReactElement<PanelProps>;
     defaultConfig?: LayoutConfig;
     wrapDnd?: boolean;
 }) {
-    const children = React.Children.toArray(props.children) as React.ReactElement<PanelProps>[];
+    const children_array = React.Children.toArray(children) as React.ReactElement<PanelProps>[];
     const namedChildren = Object.fromEntries(
-        children.map((c, i) => [
+        children_array.map((c, i) => [
             c.props.name || (c.key !== null ? c.key.toString().slice(2) : `unnamed-${i}`),
             {
                 element: c.props.children as any,
@@ -534,14 +561,14 @@ export function Layout(props: {
     );
     const panelElements = useRef<Map<LayoutConfig, HTMLDivElement>>(new Map());
     const [rootConfig, setRootConfig] = useState<LayoutConfig>(
-        props.defaultConfig || {
+        defaultConfig || {
             kind: "row",
             size: 1,
-            children: children.map((c, i) => ({
+            children: children_array.map((c, i) => ({
                 kind: "leaf",
                 tabs: [c.props.name || (c.key !== null ? c.key.toString().slice(2) : `unnamed-${i}`)],
                 tabIndex: 0,
-                size: 100 / children.length,
+                size: 100 / children_array.length,
             })),
         },
     );
@@ -566,12 +593,8 @@ export function Layout(props: {
             <Overlay panelElements={panelElements} onDrop={handleDrop} rootConfig={config} />
         </div>
     );
-    if (props.wrapDnd) {
+    if (wrapDnd) {
         return <DndProvider backend={HTML5Backend}>{container}</DndProvider>;
     }
     return container;
-}
-
-Layout.defaultProps = {
-    wrapDnd: true,
 }

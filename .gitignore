@@ -28,7 +28,6 @@ src/**/*.d.ts
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-yarn.lock
 
 .husky
 pret/ui/simple_dock/js-extension

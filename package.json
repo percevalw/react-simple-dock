@@ -13,8 +13,8 @@
     "eject": "react-scripts eject",
     "build:lib": "sh scripts/build_lib.sh",
     "prepublishOnly": "npm run build:lib",
-    "build:pret": "npm clean && jupyter labextension build .",
-    "build:pret:dev": "npm clean && jupyter labextension build --development True . && node scripts/editPackageJson.js",
+    "build:pret": "npm run clean && jupyter labextension build .",
+    "build:pret:dev": "npm run clean && jupyter labextension build --development True . && node scripts/editPackageJson.js",
     "clean": "rm -rf pret/ui/simple_dock/js-extension lib"
   },
   "dependencies": {
@@ -45,7 +45,7 @@
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "ts-loader": "^9.5.2",
-    "typescript": "<5.0.0",
+    "typescript": "^5.8.2",
     "web-vitals": "^2.1.4"
   },
   "jupyterlab": {

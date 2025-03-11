@@ -52,4 +52,4 @@ include = ["pret"]
 
 [tool.hatch.build.targets.wheel.shared-data]
 # share/jupyter/labextensions/XXX -> XXX must be the same as main name in package.json
-"pret/ui/simple_dock/js-extension" = "share/jupyter/labextensions/pret-simple-dock"
+"pret/ui/simple_dock/js-extension" = "share/jupyter/labextensions/react-simple-dock"
