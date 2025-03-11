@@ -16,7 +16,7 @@ export type LeafLayoutConfig = {
   tabs: string[];
   tabIndex: number;
   size: number;
-  nesting: number;
+  nesting?: number;
 };
 
 /**
@@ -29,7 +29,7 @@ export type ContainerLayoutConfig = {
   children: LayoutConfig[];
   size: number;
   // At the moment, we only use nesting to detect if a container is the root container.
-  nesting: number;
+  nesting?: number;
 };
 
 /**

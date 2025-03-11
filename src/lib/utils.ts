@@ -38,24 +38,6 @@ const simplifyLayout = (config: LayoutConfig) => {
 };
 
 /**
- * Recomputes the nesting levels of a layout configuration, inplace.
- *
- * Traverses the layout configuration tree and updates the nesting level of each node
- * based on the nesting level of its parent.
- *
- * @param config - The layout configuration to recompute nesting levels for.
- * @param nesting - The nesting level of the parent node.
- * @returns The updated layout configuration with recomputed nesting levels.
- */
-const recomputeNesting_ = (config: LayoutConfig, nesting: number): LayoutConfig => {
-    config.nesting = nesting;
-    if (config.kind !== "leaf") {
-        config.children.forEach((child) => recomputeNesting_(child, nesting + 1));
-    }
-    return config;
-};
-
-/**
  * Moves a panel within the layout based on a drop zone and panel name.
  *
  * This function traverses the layout config tree, removing the panel from its original position,
@@ -90,7 +72,6 @@ export const movePanel = (zone: Zone | null, name: string, inside: LayoutConfig)
                     kind: "leaf",
                     tabs: [name],
                     tabIndex: 0,
-                    nesting: -1,
                     size: visitedConfig.size,
                 };
             }
@@ -110,7 +91,6 @@ export const movePanel = (zone: Zone | null, name: string, inside: LayoutConfig)
                         kind: "leaf",
                         tabs: [name],
                         tabIndex: 0,
-                        nesting: -1,
                         size: (totalSize * fraction) / (1 - fraction),
                     };
                     config = {
@@ -125,7 +105,6 @@ export const movePanel = (zone: Zone | null, name: string, inside: LayoutConfig)
                         kind: "leaf",
                         tabs: [name],
                         tabIndex: 0,
-                        nesting: -1,
                         size: 50,
                     };
                     const oldConfig = {
@@ -133,14 +112,12 @@ export const movePanel = (zone: Zone | null, name: string, inside: LayoutConfig)
                         // Remove the panel that is being moved
                         children: config.children.map(editLayout).filter((c) => c !== null),
                         size: 50,
-                        nesting: -1,
                     };
                     config = {
                         kind: newConfigKind,
                         children:
                             zone.index === "TOP" || zone.index === "LEFT" ? [newZone, oldConfig] : [oldConfig, newZone],
                         size: config.size,
-                        nesting: -1,
                     };
                 }
             }
@@ -170,17 +147,15 @@ export const movePanel = (zone: Zone | null, name: string, inside: LayoutConfig)
                         kind: "leaf",
                         tabs: [name],
                         tabIndex: 0,
-                        nesting: -1,
                         size: 50,
                     };
                     config = {
                         kind: zone.index === "TOP" || zone.index === "BOTTOM" ? "column" : "row",
                         children:
                             zone.index === "TOP" || zone.index === "LEFT"
-                                ? [newZone, { ...config, nesting: -1, size: 50 }]
-                                : [{ ...config, size: 50, nesting: -1 }, newZone],
+                                ? [newZone, { ...config, size: 50 }]
+                                : [{ ...config, size: 50, }, newZone],
                         size: config.size,
-                        nesting: config.nesting,
                     };
                 }
             }
@@ -219,7 +194,7 @@ export const movePanel = (zone: Zone | null, name: string, inside: LayoutConfig)
         return config;
     };
 
-    return recomputeNesting_(editLayout(inside), 0);
+    return editLayout(inside);
 };
 
 /**

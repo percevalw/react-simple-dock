@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import "./index.css";
 import { DndProvider, useDrag, useDragDropManager, useDrop } from "react-dnd";
-import { DnDItem, LayoutConfig, LeafLayoutConfig, PanelProps, Zone } from "./types";
+import { ContainerLayoutConfig, DnDItem, LayoutConfig, LeafLayoutConfig, PanelProps, Zone } from "./types";
 import { filterPanels, movePanel } from "./utils";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
@@ -297,9 +297,11 @@ const NestedPanel = React.memo(
 const Overlay = ({
     panelElements,
     onDrop,
+    rootConfig,
 }: {
-    panelElements: React.MutableRefObject<Map<LayoutConfig, HTMLDivElement>>;
+    panelElements: React.RefObject<Map<LayoutConfig, HTMLDivElement>>;
     onDrop: (zone: Zone, name: string) => void;
+    rootConfig?: LayoutConfig;
 }) => {
     const closestRef = useRef<Zone>(null);
     const lastItem = useRef<DnDItem | null>(null);
@@ -333,15 +335,22 @@ const Overlay = ({
     const dragDropManager = useDragDropManager();
     const monitor = dragDropManager.getMonitor();
 
-    const subscribeRef = useRef<any>(null);
+    const subscribeOffsetChangeRef = useRef<any>(null);
+    const subscribeStateChangeRef = useRef<any>(null);
     useEffect(() => {
-        monitor.subscribeToStateChange(() => {
+        // print with uuid of rootConfig
+        if (subscribeStateChangeRef.current) {
+            subscribeStateChangeRef.current();
+            subscribeStateChangeRef.current = null;
+        }
+        subscribeStateChangeRef.current = monitor.subscribeToStateChange(() => {
             const draggedItem = monitor.getItem();
             if (!monitor.isDragging() && lastItem.current?.handleElement.previousSibling) {
                 (lastItem.current.handleElement.previousSibling as any).style.height = "0px";
                 clearDnDState();
             }
-            if (monitor.getItemType() === "TabHeader" && monitor.isDragging() && !subscribeRef.current) {
+            if (monitor.getItemType() === "TabHeader" && monitor.isDragging() && !subscribeOffsetChangeRef.current) {
+                const name = draggedItem.name;
                 const placeholder = draggedItem.handleElement.previousSibling;
                 if (placeholder) {
                     placeholder.style.height = draggedItem.handleElement.offsetHeight + "px";
@@ -362,22 +371,35 @@ const Overlay = ({
                         zones.push({ rect, config, index, element });
                     };
                     if (config.kind === "leaf") {
-                        pushZone("TOP", left, top, width, height / 2);
-                        pushZone("BOTTOM", left, top + height / 2, width, height / 2);
-                        pushZone("LEFT", left, top, width / 2, height);
-                        pushZone("RIGHT", left + width / 2, top, width / 2, height);
+                        if (!config.tabs.includes(name)) {
+                            pushZone("TOP", left, top, width, height / 2);
+                            pushZone("BOTTOM", left, top + height / 2, width, height / 2);
+                            pushZone("LEFT", left, top, width / 2, height);
+                            pushZone("RIGHT", left + width / 2, top, width / 2, height);
+                        }
                         pushZone("CENTER", left, top, width, height);
                         pushZone("TAB", left, top, width, getPanelElementHeader(element).offsetHeight);
                     } else {
-                        if (config.kind === "row" || config.nesting === 0) {
+                        const firstTabs = (config.children?.[0] as any)?.tabs || [null];
+                        const lastTabs = (config.children?.[config.children.length - 1] as any)?.tabs || [null];
+                        if (config.kind === "row" || config === rootConfig) {
                             const zoneWidth = width / (config.kind === "row" ? config.children.length + 1 : 2);
-                            pushZone("LEFT", left, top, zoneWidth, height);
-                            pushZone("RIGHT", left + width - zoneWidth, top, zoneWidth, height);
+                            // check that the dragged item is not the last item in the row and a single tab
+                            if (lastTabs.length > 1 || lastTabs[0] !== name) {
+                                pushZone("RIGHT", left + width - zoneWidth, top, zoneWidth, height);
+                            }
+                            if (firstTabs.length > 1 || firstTabs[0] !== name) {
+                                pushZone("LEFT", left, top, zoneWidth, height);
+                            }
                         }
-                        if (config.kind === "column" || config.nesting === 0) {
+                        if (config.kind === "column" || config === rootConfig) {
                             const zoneHeight = height / (config.kind === "column" ? config.children.length + 1 : 2);
-                            pushZone("TOP", left, top, width, zoneHeight);
-                            pushZone("BOTTOM", left, top + height - zoneHeight, width, zoneHeight);
+                            if (lastTabs.length > 1 || lastTabs[0] !== name) {
+                                pushZone("BOTTOM", left, top + height - zoneHeight, width, zoneHeight);
+                            }
+                            if (firstTabs.length > 1 || firstTabs[0] !== name) {
+                                pushZone("TOP", left, top, width, zoneHeight);
+                            }
                         }
                     }
                 }
@@ -391,7 +413,7 @@ const Overlay = ({
                     draggedItem.handleElement!.getBoundingClientRect().offsetWidth + "px";
                 lastPlaceholder.current = draggedItem.handleElement!.nextSibling;
 
-                subscribeRef.current = monitor.subscribeToOffsetChange(() => {
+                subscribeOffsetChangeRef.current = monitor.subscribeToOffsetChange(() => {
                     let candidateZones = zones;
                     const offset = monitor.getClientOffset()!;
                     const draggedItem = monitor.getItem() as {
@@ -479,9 +501,9 @@ const Overlay = ({
                         lastPlaceholder.current.style.width = "0px";
                     }
                 });
-            } else if (subscribeRef.current && !monitor.isDragging()) {
-                subscribeRef.current();
-                subscribeRef.current = null;
+            } else if (subscribeOffsetChangeRef.current && !monitor.isDragging()) {
+                subscribeOffsetChangeRef.current();
+                subscribeOffsetChangeRef.current = null;
                 overlayRef.current!.style.display = "none";
                 overlayRef.current!.style.left = "0";
                 overlayRef.current!.style.top = "0";
@@ -489,7 +511,7 @@ const Overlay = ({
                 overlayRef.current!.style.height = "0";
             }
         });
-    }, [monitor, onDrop]);
+    }, [monitor, onDrop, rootConfig]);
 
     const overlayRef = useRef<HTMLDivElement>(null);
     return <div className="tab-handle-overlay" ref={overlayRef} />;
@@ -515,10 +537,8 @@ export function Layout(props: {
         props.defaultConfig || {
             kind: "row",
             size: 1,
-            nesting: 0,
             children: children.map((c, i) => ({
                 kind: "leaf",
-                nesting: 1,
                 tabs: [c.props.name || (c.key !== null ? c.key.toString().slice(2) : `unnamed-${i}`)],
                 tabIndex: 0,
                 size: 100 / children.length,
@@ -530,13 +550,12 @@ export function Layout(props: {
     if (rootConfig.kind !== "leaf" || rootConfig.tabs.length > 0) {
         const newConfig = filterPanels(Object.keys(namedChildren), rootConfig);
         if (newConfig !== rootConfig) {
-            config = newConfig || { kind: "leaf", tabs: [], tabIndex: 0, size: 100, nesting: 0 };
+            config = newConfig || { kind: "leaf", tabs: [], tabIndex: 0, size: 100 };
             setRootConfig(config);
         }
     }
 
     const handleDrop = (zone: Zone, name: string) => {
-        console.log(zone, name);
         const newConfig = movePanel(zone, name, rootConfig);
         setRootConfig(newConfig!);
     };
@@ -544,7 +563,7 @@ export function Layout(props: {
     const container = (
         <div className="container">
             <NestedPanel leaves={namedChildren} config={config} panelElements={panelElements.current} />
-            <Overlay panelElements={panelElements} onDrop={handleDrop} />
+            <Overlay panelElements={panelElements} onDrop={handleDrop} rootConfig={config} />
         </div>
     );
     if (props.wrapDnd) {

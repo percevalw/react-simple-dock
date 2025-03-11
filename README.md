@@ -11,10 +11,10 @@ npm install react-simple-dock
 ## Usage
 
 ```tsx
-import React from 'react';
-import {Layout, Panel} from 'react-simple-dock';
-import {DndProvider} from "react-dnd";
-import {HTML5Backend} from "react-dnd-html5-backend";
+import React from "react";
+import { Layout, Panel } from "react-simple-dock";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const DEFAULT_CONFIG = {
     kind: "row",
@@ -24,17 +24,17 @@ const DEFAULT_CONFIG = {
             kind: "column",
             size: 50,
             children: [
-                {kind: "leaf", tabs: ["Panel 1"], tabIndex: 0, size: 50},
-                {kind: "leaf", tabs: ["Panel 2"], tabIndex: 0, size: 50},
+                { kind: "leaf", tabs: ["Panel 1"], tabIndex: 0, size: 50 },
+                { kind: "leaf", tabs: ["Panel 2"], tabIndex: 0, size: 50 },
             ],
         },
-        {kind: "leaf", tabs: ["Panel 3"], tabIndex: 0, size: 50},
+        { kind: "leaf", tabs: ["Panel 3"], tabIndex: 0, size: 50 },
     ],
-}
+};
 
-const NewApp = () => (
+const App = () => (
     <DndProvider backend={HTML5Backend}>
-        <div style={{background: "#bdbdbd", width: "100vw", height: "100vh"}}>
+        <div style={{ background: "#bdbdbd", width: "100vw", height: "100vh" }}>
             <Layout
                 /* optional initial layout config */
                 defaultConfig={DEFAULT_CONFIG}
@@ -53,14 +53,7 @@ const NewApp = () => (
     </DndProvider>
 );
 
-
-ReactDOM.createRoot(
-    document.getElementById("root") as HTMLElement
-).render(
-    /*<React.StrictMode>*/
-    <NewApp/>
-    /*</React.StrictMode>*/
-);
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(<App />);
 ```
 
 ## Demo
