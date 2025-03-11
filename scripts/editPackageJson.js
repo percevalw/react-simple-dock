@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const rootPackagePath = path.resolve(__dirname, "..", "package.json");
-const distDir = path.resolve(__dirname, "..", "dist");
+const distDir = path.resolve(__dirname, "..", "lib");
 const distPackagePath = path.join(distDir, "package.json");
 
 const packageJson = JSON.parse(fs.readFileSync(rootPackagePath, "utf8"));

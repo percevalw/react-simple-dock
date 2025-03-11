@@ -2,20 +2,20 @@
 set -e
 
 echo "Cleaning previous builds..."
-rm -rf dist
+rm -rf lib
 
 echo "Compiling typescript..."
 # Run your TypeScript build (adjust if you use Babel)
 tsc --build tsconfig.lib.json
 
 echo "Copying assets..."
-cp -r src/lib/*.css dist
+cp -r src/lib/*.css lib
 
 echo "Updating package.json for distribution..."
 node scripts/editPackageJson.js
 
 echo "Copying README.md and LICENSE..."
-cp README.md dist/README.md
-cp LICENSE dist/LICENSE
+cp README.md lib/README.md
+cp LICENSE lib/LICENSE
 
 echo "Build complete!"
