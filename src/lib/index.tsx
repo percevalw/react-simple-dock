@@ -385,19 +385,19 @@ const Overlay = ({
                         if (config.kind === "row" || config === rootConfig) {
                             const zoneWidth = width / (config.kind === "row" ? config.children.length + 1 : 2);
                             // check that the dragged item is not the last item in the row and a single tab
-                            if (lastTabs.length > 1 || lastTabs[0] !== name) {
+                            if (config === rootConfig || lastTabs.length > 1 || lastTabs[0] !== name) {
                                 pushZone("RIGHT", left + width - zoneWidth, top, zoneWidth, height);
                             }
-                            if (firstTabs.length > 1 || firstTabs[0] !== name) {
+                            if (config === rootConfig || firstTabs.length > 1 || firstTabs[0] !== name) {
                                 pushZone("LEFT", left, top, zoneWidth, height);
                             }
                         }
                         if (config.kind === "column" || config === rootConfig) {
                             const zoneHeight = height / (config.kind === "column" ? config.children.length + 1 : 2);
-                            if (lastTabs.length > 1 || lastTabs[0] !== name) {
+                            if (config === rootConfig || lastTabs.length > 1 || lastTabs[0] !== name) {
                                 pushZone("BOTTOM", left, top + height - zoneHeight, width, zoneHeight);
                             }
-                            if (firstTabs.length > 1 || firstTabs[0] !== name) {
+                            if (config === rootConfig || firstTabs.length > 1 || firstTabs[0] !== name) {
                                 pushZone("TOP", left, top, width, zoneHeight);
                             }
                         }

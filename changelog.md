@@ -1,3 +1,7 @@
+## v0.1.1
+
+Minor fix to support dropping a panel on every side of the top-level container.
+
 ## v0.1.0
 
 Inception !

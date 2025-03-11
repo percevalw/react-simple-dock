@@ -8,6 +8,10 @@ A set of React components to create a dockable interface, allowing to arrange an
 npm install react-simple-dock
 ```
 
+## Demo
+
+[![Edit react-simple-dock](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/sandbox/zwgwp3)
+
 ## Usage
 
 ```tsx
@@ -55,7 +59,3 @@ const App = () => (
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(<App />);
 ```
-
-## Demo
-
-[![Edit react-simple-dock](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/react-simple-dock-1j2j2?fontsize=14&hidenavigation=1&theme=dark)
