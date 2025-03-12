@@ -263,7 +263,7 @@ const NestedPanel = React.memo(
                 <div className="panel-content" ref={panelContentRef} style={makeStyle()}>
                     {config.kind === "leaf" ? (
                         config.tabIndex < config.tabs.length ? (
-                            <div>{leaves[config.tabs[config.tabIndex]].element}</div>
+                            <div key={config.tabs[config.tabIndex]}>{leaves[config.tabs[config.tabIndex]].element}</div>
                         ) : (
                             <div style={{ width: "100%", height: "100%" }} />
                         )
