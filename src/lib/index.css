@@ -1,6 +1,7 @@
 /* Light Theme, feel free to override */
 :root {
     --sd-grid-gap: 3px;
+    --sd-panel-border: solid;
 }
 
 :root[data-theme="light"] {
@@ -110,6 +111,8 @@ body[data-jp-theme-light] {
 .leaf > .panel-content {
     position: relative;
     flex: 1;
+    border: var(--sd-panel-border, solid) var(--sd-tab-border-color, #bdbdbd);
+    border-width: 0 1px 1px 1px;
 }
 
 .leaf > .panel-content > div {

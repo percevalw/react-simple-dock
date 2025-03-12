@@ -10,7 +10,20 @@ function useForceUpdate() {
     return () => setValue((value) => value + 1); // update state to force render
 }
 
-const getPanelElementHeader = (node: HTMLElement): HTMLElement => node.children[0] as any;
+const getPanelElementMaxHeaderHeight = (config: LayoutConfig, panelElements: Map<LayoutConfig, HTMLDivElement>) => {
+    // If we have a leaf, then the header height is the max of each tabs header height
+    if (config.kind === "leaf") {
+        return Math.max(...config.tabs.map((tab) => (panelElements.get(config).children[0] as any).offsetHeight));
+    }
+    // If we have a row, then the header height is the max of each child's max header height
+    else if (config.kind === "row") {
+        return Math.max(...config.children.map((c) => getPanelElementMaxHeaderHeight(c, panelElements)));
+    }
+    // If we have a column, then the header height is the sum of each child's max header height
+    else {
+        return config.children.reduce((a, b) => a + getPanelElementMaxHeaderHeight(b, panelElements), 0);
+    }
+};
 
 const TabHandle = ({
     name,
@@ -217,15 +230,16 @@ const NestedPanel = React.memo(
                 let size = savedSizes.current[idx] * ratio;
                 let nextSize = savedSizes.current[idx + 1] + (savedSizes.current[idx] - size);
                 const total = savedSizes.current.reduce((a, b) => a + b, 0);
-                const headerHeight = getPanelElementHeader(target.parentElement).offsetHeight;
 
                 if (config.kind === "column") {
+                    const headerHeightBefore = getPanelElementMaxHeaderHeight(config.children[idx], panelElements);
+                    const headerHeightAfter = getPanelElementMaxHeaderHeight(config.children[idx + 1], panelElements);
                     const parentHeight = panelContentRef.current!.offsetHeight;
-                    if ((size * parentHeight) / total < headerHeight) {
-                        size = (headerHeight / parentHeight) * total;
+                    if ((size * parentHeight) / total < headerHeightBefore) {
+                        size = (headerHeightBefore / parentHeight) * total;
                         nextSize = savedSizes.current[idx + 1] + (savedSizes.current[idx] - size);
-                    } else if ((nextSize * parentHeight) / total < headerHeight) {
-                        nextSize = (headerHeight / parentHeight) * total;
+                    } else if ((nextSize * parentHeight) / total < headerHeightAfter) {
+                        nextSize = (headerHeightAfter / parentHeight) * total;
                         size = savedSizes.current[idx] + (savedSizes.current[idx + 1] - nextSize);
                     }
                 }
@@ -367,14 +381,19 @@ const Overlay = ({
                         zones.push({ rect, config, index, element });
                     };
                     if (config.kind === "leaf") {
-                        if (!config.tabs.includes(name)) {
+                        if (!(config.tabs.length == 1 && config.tabs[0] == name)) {
                             pushZone("TOP", left, top, width, height / 2);
                             pushZone("BOTTOM", left, top + height / 2, width, height / 2);
                             pushZone("LEFT", left, top, width / 2, height);
                             pushZone("RIGHT", left + width / 2, top, width / 2, height);
                         }
-                        pushZone("CENTER", left, top, width, height);
-                        pushZone("TAB", left, top, width, getPanelElementHeader(element).offsetHeight);
+                        // Only allow center zone if it's for the panel to stay at the same spot.
+                        // Indeed, it was confusing since it appears like it's going to create
+                        // a new panel, when in reality it just creates a new tab in the target panel.
+                        else {
+                            pushZone("CENTER", left, top, width, height);
+                        }
+                        pushZone("TAB", left, top, width, (element.children[0] as HTMLElement).offsetHeight);
                     } else {
                         const firstTabs = (config.children?.[0] as any)?.tabs || [null];
                         const lastTabs = (config.children?.[config.children.length - 1] as any)?.tabs || [null];
@@ -513,7 +532,6 @@ const Overlay = ({
     return <div className="tab-handle-overlay" ref={overlayRef} />;
 };
 
-
 /**
  * A Panel component.
  *
@@ -526,7 +544,6 @@ const Overlay = ({
 export const Panel = (props: PanelProps) => {
     return null;
 };
-
 
 /**
  * Main layout component that organizes panels and handles drag and drop.

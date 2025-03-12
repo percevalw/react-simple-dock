@@ -1,4 +1,9 @@
-## v0.1.1
+## v0.1.4
+
+- Fixed a bug that prevents resizing a panel in a column whose first children is a row container.
+- Default to thin border for panel content.
+
+## v0.1.2
 
 Now wraps the layout into a drag and drop context by default.
 
