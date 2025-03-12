@@ -1,13 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&display=swap");
+
 body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-}
-
-code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+    font-family: "Noto Sans", sans-serif;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -31,11 +26,18 @@ code {
 
 .close-button {
     appearance: none;
+    background: none;
     border: 0;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
-    margin: -1px;
+    padding: 0;
+    margin: 0;
+    line-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-button:hover {
+    cursor: pointer;
 }
 
 .App-header {
@@ -70,4 +72,10 @@ code {
 
 .custom-header > span {
     text-overflow: ellipsis;
+}
+
+.custom-header {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adjust space between text and button */
 }

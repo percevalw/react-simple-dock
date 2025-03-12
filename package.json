@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@jupyterlab/builder": "^3.6.3",
+    "@playwright/test": "^1.51.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",

@@ -33,3 +33,11 @@ yarn-error.log*
 pret/ui/simple_dock/js-extension
 
 __pycache__/
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+.last-run.json
