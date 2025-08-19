@@ -2,9 +2,9 @@
 import sys
 from typing import Any, Union
 from pret.render import stub_component
-from pret.bridge import make_stub_js_module, js, pyodide
+from pret.marshal import make_stub_js_module, js
 
-__version__ = "0.1.4"
+__version__ = "0.2.0"
 _py_package_name = "pret-simple-dock"
 _js_package_name = "react-simple-dock"
 _js_global_name = "SimpleDock"

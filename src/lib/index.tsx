@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { DndProvider, useDrag, useDrop, useDragDropManager } from "react-dnd";
 import "./index.css";
-import { DndProvider, useDrag, useDragDropManager, useDrop } from "react-dnd";
-import { ContainerLayoutConfig, DnDItem, LayoutConfig, LeafLayoutConfig, PanelProps, Zone } from "./types";
+import { DnDItem, LayoutConfig, LeafLayoutConfig, PanelProps, Zone, DefaultLeafConfig, DefaultContainerConfig, DefaultLayoutConfig } from "./types";
 import { filterPanels, movePanel } from "./utils";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
@@ -24,6 +24,32 @@ const getPanelElementMaxHeaderHeight = (config: LayoutConfig, panelElements: Map
         return config.children.reduce((a, b) => a + getPanelElementMaxHeaderHeight(b, panelElements), 0);
     }
 };
+
+function normalizeConfig(
+    config: DefaultLayoutConfig,
+    siblingsCount: number,
+    depth = 0,
+    default_kind: "row" | "column" = depth % 2 === 0 ? "row" : "column",
+): LayoutConfig {
+    if (typeof config === "string") {
+        config = {tabs: [config]} as DefaultLeafConfig;
+    }
+    if (Array.isArray(config)) {
+        config = {children: config} as DefaultContainerConfig;
+    }
+    // Leaf panel if tabs provided
+    if ((config as DefaultLeafConfig).tabs) {
+        const leaf = config as DefaultLeafConfig;
+        const tabIndex = typeof leaf.tabIndex === "number" ? leaf.tabIndex : 0;
+        const size = typeof leaf.size === "number" ? leaf.size : 100 / siblingsCount;
+        return { kind: "leaf", tabs: leaf.tabs, tabIndex, size, nesting: leaf.nesting };
+    }
+    const container = config as DefaultContainerConfig;
+    const kind = container.kind || default_kind;
+    const size = typeof container.size === "number" ? container.size : 100 / siblingsCount;
+    const children = container.children.map((child) => normalizeConfig(child, container.children.length, depth + 1, kind === "row" ? "column" : "row"));
+    return { kind, children, size, nesting: container.nesting };
+}
 
 const TabHandle = ({
     name,
@@ -313,6 +339,7 @@ const Overlay = ({
     onDrop: (zone: Zone, name: string) => void;
     rootConfig?: LayoutConfig;
 }) => {
+    const [, set] = useState();
     const closestRef = useRef<Zone>(null);
     const lastItem = useRef<DnDItem | null>(null);
 
@@ -563,7 +590,7 @@ export function Layout({
     wrapDnd = true,
 }: {
     children: React.ReactElement<PanelProps>[] | React.ReactElement<PanelProps>;
-    defaultConfig?: LayoutConfig;
+    defaultConfig?: DefaultLayoutConfig;
     wrapDnd?: boolean;
 }) {
     const children_array = React.Children.toArray(children) as React.ReactElement<PanelProps>[];
@@ -578,16 +605,18 @@ export function Layout({
     );
     const panelElements = useRef<Map<LayoutConfig, HTMLDivElement>>(new Map());
     const [rootConfig, setRootConfig] = useState<LayoutConfig>(
-        defaultConfig || {
-            kind: "row",
-            size: 1,
-            children: children_array.map((c, i) => ({
-                kind: "leaf",
-                tabs: [c.props.name || (c.key !== null ? c.key.toString().slice(2) : `unnamed-${i}`)],
-                tabIndex: 0,
-                size: 100 / children_array.length,
-            })),
-        },
+        defaultConfig
+            ? normalizeConfig(defaultConfig, children_array.length)
+            : {
+                  kind: "row",
+                  size: 1,
+                  children: children_array.map((c, i) => ({
+                      kind: "leaf",
+                      tabs: [c.props.name || (c.key !== null ? c.key.toString().slice(2) : `unnamed-${i}`)],
+                      tabIndex: 0,
+                      size: 100 / children_array.length,
+                  })),
+              },
     );
     let config = rootConfig;
 

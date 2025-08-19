@@ -34,6 +34,24 @@ export type ContainerLayoutConfig = {
 export type LayoutConfig = LeafLayoutConfig | ContainerLayoutConfig;
 
 /**
+ * User-provided config can omit kind, size, and tabIndex for inference
+ */
+export type DefaultLeafConfig = {
+  kind?: "leaf";
+  tabs: string[];
+  tabIndex?: number;
+  size?: number;
+  nesting?: number;
+};
+export type DefaultContainerConfig = {
+  kind?: "row" | "column";
+  children: DefaultLayoutConfig[];
+  size?: number;
+  nesting?: number;
+};
+export type DefaultLayoutConfig = string | DefaultLeafConfig | DefaultContainerConfig | DefaultLayoutConfig[];
+
+/**
  * Properties for a panel component.
  *
  * Defines the children to render within the panel, an optional name, and an optional header.

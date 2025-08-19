@@ -5,7 +5,6 @@ echo "Cleaning previous builds..."
 rm -rf lib
 
 echo "Compiling typescript..."
-# Run your TypeScript build (adjust if you use Babel)
 tsc --version
 tsc --build tsconfig.lib.json
 
