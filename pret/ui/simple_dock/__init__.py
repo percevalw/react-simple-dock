@@ -4,7 +4,7 @@ from typing import Any, Union, List
 from pret.render import stub_component
 from pret.marshal import make_stub_js_module, js
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 _py_package_name = "pret-simple-dock"
 _js_package_name = "react-simple-dock"
 _js_global_name = "SimpleDock"
