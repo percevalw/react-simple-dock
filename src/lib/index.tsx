@@ -21,11 +21,7 @@ function useForceUpdate() {
 
 const isMobileDevice = (): boolean => {
     if (typeof window === "undefined" || typeof navigator === "undefined") return false;
-    const mqCoarse = window.matchMedia?.("(pointer: coarse)").matches;
-    const mqNoHover = window.matchMedia?.("(hover: none)").matches;
-    const ua = navigator.userAgent || "";
-    const uaMatch = /Mobi|Android|iPhone|iPad|iPod|Windows Phone|IEMobile|Opera Mini/i.test(ua);
-    return !!(mqCoarse || mqNoHover || uaMatch);
+    return /Mobi|Android|iPhone|iPad|iPod|Windows Phone|IEMobile|Opera Mini/i.test(navigator.userAgent || "");
 };
 
 const getPanelElementMaxHeaderHeight = (config: LayoutConfig, panelElements: Map<LayoutConfig, HTMLDivElement>) => {

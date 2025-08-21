@@ -1,5 +1,9 @@
 # React-Simple-Dock
 
+[![PyPI - pret-simple-dock](https://img.shields.io/pypi/v/pret-simple-dock?style=flat-square&color=blue)](https://pypi.org/project/pret-simple-dock/)
+[![npm - react-simple-dock](https://img.shields.io/npm/v/react-simple-dock?style=flat-square&color=blue)](https://www.npmjs.com/package/react-simple-dock)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/percevalw/react-simple-dock/playwright.yml?style=flat-square)](https://github.com/percevalw/react-simple-dock/actions/workflows/playwright.yml)
+
 A set of React components to create a dockable interface, allowing to arrange and resize tabs.
 
 ## Installation of the javascript package
