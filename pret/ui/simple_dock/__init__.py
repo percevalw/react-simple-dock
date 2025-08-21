@@ -1,6 +1,6 @@
 
 import sys
-from typing import Any, Union
+from typing import Any, Union, List
 from pret.render import stub_component
 from pret.marshal import make_stub_js_module, js
 
@@ -18,11 +18,12 @@ else:
 
 props_mapping = {
  "default_config": "defaultConfig",
- "wrap_dnd": "wrapDnd"
+ "wrap_dnd": "wrapDnd",
+ "collapse_tabs_on_mobile": "collapseTabsOnMobile",
 }
 
 @stub_component(js.SimpleDock.Layout, props_mapping)
-def Layout(*children, default_config: Any, key: Union[str, int], wrap_dnd: bool):
+def Layout(*children, default_config: Any, key: Union[str, int], wrap_dnd: bool, collapse_tabs_on_mobile: Union[bool, List[str]] = True):
     """
     Main layout component that organizes panels and handles drag and drop.
     
@@ -33,9 +34,14 @@ def Layout(*children, default_config: Any, key: Union[str, int], wrap_dnd: bool)
     Parameters
     ----------
     default_config: Any
-          The default layout configuration to use.
+        The default layout configuration to use.
     wrap_dnd: bool
-          A boolean flag to enable or disable drag and drop support (default: true).
+        A boolean flag to enable or disable drag and drop support (default: true).
+    collapse_tabs_on_mobile: Union[bool, List[str]]
+        A boolean flag to auto collapse tabs on mobile devices (default: true)
+        and override the default layout configuration.
+        If set to a list of strings, it will show the specified tabs first, and add
+        the rest at the end of the tab bar.
 """
 @stub_component(js.SimpleDock.Panel, props_mapping)
 def Panel(*children, header: Union[str, int, float, Any, bool], key: Union[str, int], name: str):
@@ -47,9 +53,9 @@ def Panel(*children, header: Union[str, int, float, Any, bool], key: Union[str, 
     Parameters
     ----------
     header: Union[str, int, float, Any, bool]
-          The content to render in the panel header.
+        The content to render in the panel header.
     name: str
-          The unique identifier of the panel.
+        The unique identifier of the panel.
 """
 
 

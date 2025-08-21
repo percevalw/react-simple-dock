@@ -1,7 +1,16 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { DndProvider, useDrag, useDrop, useDragDropManager } from "react-dnd";
 import "./index.css";
-import { DnDItem, LayoutConfig, LeafLayoutConfig, PanelProps, Zone, DefaultLeafConfig, DefaultContainerConfig, DefaultLayoutConfig } from "./types";
+import {
+    DnDItem,
+    LayoutConfig,
+    LeafLayoutConfig,
+    PanelProps,
+    Zone,
+    DefaultLeafConfig,
+    DefaultContainerConfig,
+    DefaultLayoutConfig,
+} from "./types";
 import { filterPanels, movePanel } from "./utils";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
@@ -9,6 +18,15 @@ function useForceUpdate() {
     const [value, setValue] = useState(0); // integer state
     return () => setValue((value) => value + 1); // update state to force render
 }
+
+const isMobileDevice = (): boolean => {
+    if (typeof window === "undefined" || typeof navigator === "undefined") return false;
+    const mqCoarse = window.matchMedia?.("(pointer: coarse)").matches;
+    const mqNoHover = window.matchMedia?.("(hover: none)").matches;
+    const ua = navigator.userAgent || "";
+    const uaMatch = /Mobi|Android|iPhone|iPad|iPod|Windows Phone|IEMobile|Opera Mini/i.test(ua);
+    return !!(mqCoarse || mqNoHover || uaMatch);
+};
 
 const getPanelElementMaxHeaderHeight = (config: LayoutConfig, panelElements: Map<LayoutConfig, HTMLDivElement>) => {
     // If we have a leaf, then the header height is the max of each tabs header height
@@ -32,10 +50,10 @@ function normalizeConfig(
     default_kind: "row" | "column" = depth % 2 === 0 ? "row" : "column",
 ): LayoutConfig {
     if (typeof config === "string") {
-        config = {tabs: [config]} as DefaultLeafConfig;
+        config = { tabs: [config] } as DefaultLeafConfig;
     }
     if (Array.isArray(config)) {
-        config = {children: config} as DefaultContainerConfig;
+        config = { children: config } as DefaultContainerConfig;
     }
     // Leaf panel if tabs provided
     if ((config as DefaultLeafConfig).tabs) {
@@ -47,7 +65,9 @@ function normalizeConfig(
     const container = config as DefaultContainerConfig;
     const kind = container.kind || default_kind;
     const size = typeof container.size === "number" ? container.size : 100 / siblingsCount;
-    const children = container.children.map((child) => normalizeConfig(child, container.children.length, depth + 1, kind === "row" ? "column" : "row"));
+    const children = container.children.map((child) =>
+        normalizeConfig(child, container.children.length, depth + 1, kind === "row" ? "column" : "row"),
+    );
     return { kind, children, size, nesting: container.nesting };
 }
 
@@ -582,16 +602,19 @@ export const Panel = (props: PanelProps) => {
  * @param children The children `Panel` components to render within the layout.
  * @param defaultConfig The default layout configuration to use.
  * @param wrapDnd A boolean flag to enable or disable drag and drop support (default: true).
+ * @param collapseTabsOnMobile If true, auto-detect mobile devices and collapse the whole layout into a single tabbed panel.
  * @returns A React element representing the complete panel layout.
  */
 export function Layout({
     children,
     defaultConfig,
     wrapDnd = true,
+    collapseTabsOnMobile = true,
 }: {
     children: React.ReactElement<PanelProps>[] | React.ReactElement<PanelProps>;
     defaultConfig?: DefaultLayoutConfig;
     wrapDnd?: boolean;
+    collapseTabsOnMobile?: boolean | string[];
 }) {
     const children_array = React.Children.toArray(children) as React.ReactElement<PanelProps>[];
     const namedChildren = Object.fromEntries(
@@ -604,8 +627,8 @@ export function Layout({
         ]),
     );
     const panelElements = useRef<Map<LayoutConfig, HTMLDivElement>>(new Map());
-    const [rootConfig, setRootConfig] = useState<LayoutConfig>(
-        defaultConfig
+    const [rootConfig, setRootConfig] = useState<LayoutConfig>(() => {
+        const base: LayoutConfig = defaultConfig
             ? normalizeConfig(defaultConfig, children_array.length)
             : {
                   kind: "row",
@@ -616,8 +639,30 @@ export function Layout({
                       tabIndex: 0,
                       size: 100 / children_array.length,
                   })),
-              },
-    );
+              };
+        if (collapseTabsOnMobile && isMobileDevice()) {
+            // If collapseTabsOnMobile is a list, use the names in the list as the first tabs
+            // then complete with the rest of the named children
+            const actualTabs = Object.keys(namedChildren);
+            const tabs = [
+                ...(Array.isArray(collapseTabsOnMobile)
+                    ? collapseTabsOnMobile.filter((name) => actualTabs.includes(name))
+                    : []),
+                ...actualTabs.filter(
+                    (name) =>
+                        !Array.isArray(collapseTabsOnMobile) ||
+                        !collapseTabsOnMobile.includes(name),
+                ),
+            ];
+            return {
+                kind: "leaf",
+                tabs: tabs,
+                tabIndex: 0,
+                size: 100,
+            };
+        }
+        return base;
+    });
     let config = rootConfig;
 
     if (rootConfig.kind !== "leaf" || rootConfig.tabs.length > 0) {

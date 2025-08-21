@@ -16,6 +16,7 @@
     )
     ```
 - UI: make the scrollbar auto instead of always visible
+- UI: add mobile fallback option collapse_tabs_on_mobile/collapseTabsOnMobile to auto stack all panels in a single tab bar, and optional pass the prioritized tabs to show first
 
 ## v0.1.4
 
