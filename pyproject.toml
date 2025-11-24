@@ -23,14 +23,14 @@ dev = [
 ]
 
 [tool.ruff]
-extend-exclude = ["pret/ui/simple_dock/"]
+extend-exclude = ["pret_simple_dock/"]
 
 [tool.black]
-extend-exclude = "pret/ui/simple_dock/"
+extend-exclude = "pret_simple_dock/"
 
 # ----- Build configuration -----
 [tool.hatch.version]
-path = "pret/ui/simple_dock/__init__.py"
+path = "pret_simple_dock/__init__.py"
 
 [build-system]
 requires = ["hatchling", "jupyterlab<4.0.0"]
@@ -45,11 +45,11 @@ build-kwargs = { "build_cmd" = "build:pret", "npm" = ["jlpm"] }
 editable-build-kwargs = { "build_cmd" = "build:pret:dev", "npm" = ["jlpm"] }
 
 [tool.hatch.build]
-include = ["pret"]
+artifacts = ["pret_simple_dock", "pret"]
 
 [tool.hatch.build.targets.wheel]
-include = ["pret"]
+packages = ["pret_simple_dock", "pret"]
 
 [tool.hatch.build.targets.wheel.shared-data]
 # share/jupyter/labextensions/XXX -> XXX must be the same as main name in package.json
-"pret/ui/simple_dock/js-extension" = "share/jupyter/labextensions/react-simple-dock"
+"pret_simple_dock/js-extension" = "share/jupyter/labextensions/react-simple-dock"

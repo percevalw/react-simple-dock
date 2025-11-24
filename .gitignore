@@ -30,7 +30,7 @@ yarn-debug.log*
 yarn-error.log*
 
 .husky
-pret/ui/simple_dock/js-extension
+pret_simple_dock/js-*
 
 __pycache__/
 

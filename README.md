@@ -111,7 +111,7 @@ pip install pret
 If you have changed the signature of the components, you will need to update the python stubs.
 
 ```bash
-pret stub . SimpleDock pret/ui/simple_dock/__init__.py
+pret stub . SimpleDock pret_simple_dock/__init__.py
 ```
 
 To build the python library and make it available in your environment:

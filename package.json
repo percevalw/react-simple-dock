@@ -15,7 +15,7 @@
     "prepublishOnly": "npm run build:lib",
     "build:pret": "npm run clean && jupyter labextension build .",
     "build:pret:dev": "npm run clean && jupyter labextension build --development True . && node scripts/editPackageJson.js",
-    "clean": "rm -rf pret/ui/simple_dock/js-extension lib"
+    "clean": "rm -rf pret_simple_dock/js-extension lib"
   },
   "dependencies": {
     "react-dnd": ">=16.0.1",
@@ -52,7 +52,7 @@
   "jupyterlab": {
     "extension": "src/plugin.ts",
     "schemaDir": "src/schema",
-    "outputDir": "pret/ui/simple_dock/js-extension",
+    "outputDir": "pret_simple_dock/js-extension",
     "webpackConfig": "./webpack.config.pret.js"
   },
   "browserslist": {
